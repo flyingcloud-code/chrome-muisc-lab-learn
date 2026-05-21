@@ -539,6 +539,14 @@ button {
   padding: 32px;
 }
 
+.experiment-song-maker,
+.experiment-melody-maker,
+.experiment-piano-roll,
+.experiment-spectrogram,
+.experiment-kandinsky {
+  align-items: stretch;
+}
+
 .help-panel {
   position: absolute;
   z-index: 4;
@@ -579,7 +587,8 @@ button {
 }
 
 .composer {
-  width: min(980px, 96vw);
+  width: min(1120px, 96vw);
+  align-self: center;
 }
 
 .composer-grid,
@@ -602,7 +611,8 @@ button {
 }
 
 .composer-grid button.on {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #ffca28));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 65%);
 }
 
 .composer-grid button.current,
@@ -625,7 +635,11 @@ button {
 }
 
 .piano-room {
-  width: min(1100px, 96vw);
+  width: min(1180px, 96vw);
+  align-self: stretch;
+  display: grid;
+  align-content: end;
+  gap: 36px;
 }
 
 .room-strip {
@@ -650,7 +664,7 @@ button {
 .mini-key-row button,
 .chord-keys button {
   min-width: 70px;
-  height: 260px;
+  height: 300px;
   border: 1px solid #ccc;
   background: #fff;
   font-weight: 800;
@@ -676,21 +690,66 @@ button {
 }
 
 .animal {
+  --face: #ec407a;
+  --ear: #ffca28;
+  --muzzle: #ffd54f;
+  position: relative;
   display: grid;
   place-items: center;
-  font-size: 78px;
+  min-height: 210px;
   transition: transform 120ms ease;
 }
 
 .animal span {
-  width: 110px;
-  height: 54px;
+  width: 150px;
+  height: 74px;
   border-radius: 0 0 60px 60px;
   background: #ffca28;
+  box-shadow: inset 0 -18px 0 rgb(0 0 0 / 6%);
 }
 
 .animal.strike {
   transform: translateY(14px) rotate(-4deg);
+}
+
+.animal b {
+  width: 132px;
+  height: 132px;
+  display: block;
+  border-radius: 50%;
+  background: var(--face);
+  box-shadow: -52px 28px 0 -30px var(--ear), 52px 28px 0 -30px var(--ear);
+}
+
+.animal i {
+  position: absolute;
+  top: 64px;
+  width: 70px;
+  height: 56px;
+  border-radius: 40px;
+  background: var(--muzzle);
+}
+
+.animal em {
+  position: absolute;
+  top: 88px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #222;
+  box-shadow: 24px 0 #222;
+}
+
+.animal.bear {
+  --face: #a07048;
+  --ear: #caa071;
+  --muzzle: #f2d3a7;
+}
+
+.animal.cat {
+  --face: #f7b7c5;
+  --ear: #f3d2d8;
+  --muzzle: #fff1f2;
 }
 
 .rhythm-grid {
@@ -742,31 +801,49 @@ button {
   height: min(520px, 82vw);
   margin: auto;
   border-radius: 50%;
-  background: conic-gradient(#ef5350, #ffca28, #66bb6a, #42a5f5, #7e57c2, #ef5350);
+  background: conic-gradient(
+    #ef5350 0 30deg,
+    #ff7043 30deg 60deg,
+    #ffca28 60deg 90deg,
+    #8bc34a 90deg 120deg,
+    #26a69a 120deg 150deg,
+    #42a5f5 150deg 180deg,
+    #536dfe 180deg 210deg,
+    #7e57c2 210deg 240deg,
+    #ab47bc 240deg 270deg,
+    #ec407a 270deg 300deg,
+    #ef5350 300deg 330deg,
+    #ff7043 330deg 360deg
+  );
+  overflow: hidden;
 }
 
 .arp-wheel [data-root] {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 78px;
-  height: 78px;
-  margin: -39px;
-  transform: rotate(var(--rot)) translateY(-205px) rotate(calc(-1 * var(--rot)));
+  width: 58px;
+  height: 58px;
+  margin: -29px;
+  transform: rotate(var(--rot)) translateY(-176px) rotate(calc(-1 * var(--rot)));
   border: 0;
-  border-radius: 50%;
-  background: hsl(var(--hue) 85% 58%);
+  border-radius: 0;
+  background: transparent;
   color: #fff;
   font-weight: 900;
+  font-size: 28px;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 22%);
 }
 
 .arp-play {
   position: absolute;
-  inset: 38%;
+  inset: 36%;
   border: 0;
   border-radius: 50%;
   background: #fff;
-  font-size: 52px;
+  color: #666;
+  font-size: 62px;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 14%);
 }
 
 .voice-lab {
@@ -775,58 +852,145 @@ button {
 
 .voice-disc {
   --spin: 0rad;
-  width: min(390px, 80vw);
-  height: min(390px, 80vw);
+  position: relative;
+  width: min(440px, 82vw);
+  height: min(440px, 82vw);
   display: grid;
   place-items: center;
   margin: auto;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff 0 18%, #f7f7f7 19% 24%, #ffa726 25% 100%);
-  box-shadow: 0 0 0 18px #ffd166, inset 0 0 40px rgb(0 0 0 / 10%);
+  background: #fff;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 10%);
   transform: rotate(var(--spin));
   user-select: none;
 }
 
-.needle {
+.voice-wave {
   position: absolute;
-  width: 6px;
-  height: 160px;
+  inset: 18px;
+  border-radius: 50%;
+  transform: rotate(-90deg);
+}
+
+.voice-wave i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: var(--h);
+  background: #f7b91e;
+  border-radius: 999px;
+  transform-origin: 0 0;
+  transform: rotate(calc(var(--i) * 3.75deg)) translate(150px, -2px);
+}
+
+.voice-crosshair {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 4px;
+  height: 70px;
+  background: #e0a100;
+}
+
+.mic-button {
+  position: relative;
+  z-index: 1;
+  width: 92px;
+  height: 92px;
+  border: 0;
+  border-radius: 50%;
   background: #fff;
-  transform: translateY(-80px);
+  box-shadow: 0 4px 18px rgb(0 0 0 / 18%);
+  font-size: 42px;
 }
 
 .harmonics-lab,
 .strings-lab {
-  width: min(900px, 94vw);
-  display: grid;
-  gap: 18px;
+  width: min(940px, 94vw);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(18px, 3vw, 44px);
 }
 
 .harmonics-lab button,
 .strings-lab button {
-  height: 48px;
+  position: relative;
+  height: min(440px, 62vh);
   border: 0;
   background: transparent;
 }
 
-.harmonics-lab button::before,
-.strings-lab span {
-  content: "";
-  display: block;
-  width: calc(100% / var(--n, 1));
-  height: 8px;
-  margin: auto;
-  border-radius: 999px;
-  background: var(--accent);
+.harmonics-lab button {
+  width: 86px;
 }
 
-.harmonics-lab .ring::before,
+.harmonics-lab svg {
+  width: 80px;
+  height: 320px;
+  overflow: visible;
+}
+
+.harmonics-lab path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 65%, #f7b91e);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.harmonics-lab span {
+  display: block;
+  margin-top: 8px;
+  font-weight: 800;
+  color: #777;
+}
+
+.harmonics-lab .ring path,
 .strings-lab .pluck span {
   animation: wobble 450ms ease;
 }
 
 .strings-lab span {
-  width: var(--len);
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 6px;
+  height: var(--fill);
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #f7b91e;
+}
+
+.strings-lab b,
+.strings-lab i {
+  position: absolute;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #666;
+}
+
+.strings-lab b {
+  top: 0;
+}
+
+.strings-lab i {
+  bottom: var(--fill);
+}
+
+.strings-lab button::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #6e6e6e;
 }
 
 .osc-lab {
@@ -837,13 +1001,70 @@ button {
 }
 
 .osc-lab button {
-  min-height: 320px;
+  position: relative;
+  min-height: 360px;
   border: 0;
-  border-radius: 80px;
-  background: var(--accent);
+  border-radius: 46% 54% 52% 48% / 48% 44% 56% 52%;
+  background: #29b6f6;
   color: #fff;
   font-weight: 900;
   transform: scale(calc(0.9 + var(--pitch, 0.4) * 0.22));
+  box-shadow: inset 0 -18px 0 rgb(0 0 0 / 8%);
+}
+
+.osc-lab .osc-1 {
+  background: #ffca28;
+  border-radius: 44% 56% 46% 54% / 60% 42% 58% 40%;
+}
+
+.osc-lab .osc-2 {
+  background: #ef5350;
+  border-radius: 54% 46% 56% 44% / 44% 58% 42% 56%;
+}
+
+.osc-lab .osc-3 {
+  background: #7e57c2;
+  border-radius: 42% 58% 44% 56% / 52% 40% 60% 48%;
+}
+
+.osc-lab button b,
+.osc-lab button i {
+  position: absolute;
+  top: 42%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.osc-lab button b {
+  left: 38%;
+}
+
+.osc-lab button i {
+  right: 38%;
+}
+
+.osc-lab button em {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 58px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 0 0 40px 40px;
+  background: rgb(0 0 0 / 22%);
+}
+
+.osc-lab button span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -34px;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 13px;
 }
 
 .quality-switch {

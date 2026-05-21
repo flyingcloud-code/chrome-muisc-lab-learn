@@ -144,7 +144,7 @@ function renderExperiment(slug) {
         <p>${item.summary}</p>
         <small>${item.concept}</small>
       </div>
-      <section class="experiment-host" data-host></section>
+      <section class="experiment-host experiment-${slug}" data-host></section>
     </main>
   `);
   document.querySelector('.back').addEventListener('click', () => routeTo(''));
@@ -244,6 +244,20 @@ function renderGridComposer(host, config) {
     });
   });
 
+  const seed = config.className === 'song-maker'
+    ? ['C4:1', 'D4:2', 'E4:3', 'G4:5', 'A4:6', 'G4:7', 'E4:9', 'D4:10', 'C4:12']
+    : ['C4:0', 'D4:2', 'E4:4', 'G4:6', 'E4:8', 'D4:10', 'C4:12'];
+  for (const key of seed) {
+    notes.add(key);
+    host.querySelector(`[data-cell="${key}"]`)?.classList.add('on');
+  }
+  if (config.drumRows) {
+    for (const key of ['0:0', '1:2', '0:4', '1:6', '0:8', '1:10', '0:12', '1:14']) {
+      drums.add(key);
+      host.querySelector(`[data-drum="${key}"]`)?.classList.add('on');
+    }
+  }
+
   const clearStep = () => host.querySelectorAll('.current').forEach((node) => node.classList.remove('current'));
   const tick = () => {
     clearStep();
@@ -289,12 +303,12 @@ function renderGridComposer(host, config) {
 }
 
 function renderRhythm(host) {
-  const animals = ['🐵', '🐻', '🐱'];
+  const animals = ['monkey', 'bear', 'cat'];
   const active = new Set();
   let step = 0;
   host.innerHTML = html`
     <div class="rhythm-lab">
-      <div class="animals">${animals.map((animal, i) => `<div class="animal" data-animal="${i}">${animal}<span></span></div>`).join('')}</div>
+      <div class="animals">${animals.map((animal, i) => `<div class="animal ${animal}" data-animal="${i}"><b></b><i></i><em></em><span></span></div>`).join('')}</div>
       <div class="rhythm-grid">${animals.map((_, row) => Array.from({ length: 12 }, (_, col) => `<button data-hit="${row}:${col}"></button>`).join('')).join('')}</div>
       <div class="control-row">${button('Play', 'primary play')}</div>
     </div>
@@ -455,11 +469,16 @@ function renderKandinsky(host) {
 function renderVoiceSpinner(host) {
   host.innerHTML = html`
     <div class="voice-lab">
-      <div class="voice-disc"><div class="needle"></div><span>drag</span></div>
-      <p>拖动圆盘：顺时针更快，逆时针更低更慢。本地 MVP 用合成声音模拟录音。</p>
+      <div class="voice-disc">
+        <div class="voice-wave">${Array.from({ length: 96 }, (_, i) => `<i style="--i:${i};--h:${18 + Math.round(Math.abs(Math.sin(i * 0.41)) * 54)}px"></i>`).join('')}</div>
+        <button class="mic-button" type="button" aria-label="Microphone">🎙</button>
+        <span class="voice-crosshair"></span>
+      </div>
+      <p>拖动黄色声纹圆盘：顺时针更快，逆时针更低更慢。本地 MVP 用合成声音模拟录音。</p>
     </div>
   `;
   const disc = host.querySelector('.voice-disc');
+  host.querySelector('.mic-button').addEventListener('click', () => playTone(220, { type: 'sawtooth', duration: 0.7 }));
   disc.addEventListener('pointermove', (event) => {
     if (event.buttons !== 1) return;
     const rect = disc.getBoundingClientRect();
@@ -474,7 +493,12 @@ function renderVoiceSpinner(host) {
 function renderHarmonics(host) {
   host.innerHTML = html`
     <div class="harmonics-lab">
-      ${Array.from({ length: 8 }, (_, i) => `<button style="--n:${i + 1}" data-harmonic="${i + 1}"><span>${i + 1}x</span></button>`).join('')}
+      ${Array.from({ length: 6 }, (_, i) => `<button data-harmonic="${i + 1}" aria-label="${i + 1}x harmonic">
+        <svg viewBox="0 0 80 320" role="img" aria-hidden="true">
+          <path d="${sinePath(i + 1)}"></path>
+        </svg>
+        <span>${i + 1}x</span>
+      </button>`).join('')}
     </div>
   `;
   host.querySelectorAll('[data-harmonic]').forEach((bar) => {
@@ -486,6 +510,15 @@ function renderHarmonics(host) {
   });
 }
 
+function sinePath(waves) {
+  const points = [];
+  for (let y = 12; y <= 308; y += 6) {
+    const x = 40 + Math.sin((y / 296) * Math.PI * 2 * waves) * 28;
+    points.push(`${points.length ? 'L' : 'M'}${x.toFixed(1)} ${y}`);
+  }
+  return points.join(' ');
+}
+
 function renderPianoRoll(host) {
   const notes = [
     [0, 'C4', 2], [1, 'E4', 1], [2, 'G4', 2], [4, 'C5', 1],
@@ -493,7 +526,10 @@ function renderPianoRoll(host) {
   ];
   host.innerHTML = html`
     <div class="roll-lab">
-      <canvas width="960" height="460"></canvas>
+      <div class="roll-frame">
+        <canvas width="960" height="420"></canvas>
+        <div class="roll-keyboard">${scaleNotes.map((note) => `<span>${note.replace(/\d/, '')}</span>`).join('')}</div>
+      </div>
       <div class="control-row">${button('Play', 'primary play')}</div>
     </div>
   `;
@@ -513,9 +549,9 @@ function renderPianoRoll(host) {
     context.fillRect(180, 0, 3, canvas.height);
     for (const [start, note, len] of notes) {
       const x = 900 - (start * 95 + offset);
-      const y = 400 - scaleNotes.indexOf(note) * 42;
-      context.fillStyle = '#ec407a';
-      context.fillRect(x, y, len * 80, 28);
+      const y = 365 - scaleNotes.indexOf(note) * 42;
+      context.fillStyle = ['#4f66d8', '#4db6ac', '#8bc34a', '#f4d13d', '#ff7043'][start % 5];
+      context.fillRect(x, y, len * 80, 24);
       if (running && x <= 180 && x + 3 > 176) playNote(note, { duration: 0.18 });
     }
     if (running) offset = (offset + 3) % 1100;
@@ -526,7 +562,9 @@ function renderOscillators(host) {
   const waves = ['sine', 'square', 'triangle', 'sawtooth'];
   host.innerHTML = html`
     <div class="osc-lab">
-      ${waves.map((wave) => `<button data-wave="${wave}"><span>${wave}</span><b></b></button>`).join('')}
+      ${waves.map((wave, index) => `<button data-wave="${wave}" class="osc-blob osc-${index}">
+        <b></b><i></i><em></em><span>${wave}</span>
+      </button>`).join('')}
     </div>
   `;
   host.querySelectorAll('[data-wave]').forEach((card) => {
@@ -544,7 +582,9 @@ function renderOscillators(host) {
 function renderStrings(host) {
   host.innerHTML = html`
     <div class="strings-lab">
-      ${Array.from({ length: 8 }, (_, i) => `<button style="--len:${100 - i * 8}%" data-string="${i}"><span></span></button>`).join('')}
+      ${Array.from({ length: 7 }, (_, i) => `<button style="--fill:${100 - i * 12}%" data-string="${i}" aria-label="String ${i + 1}">
+        <span></span><b></b><i></i>
+      </button>`).join('')}
     </div>
   `;
   host.querySelectorAll('[data-string]').forEach((string) => {
