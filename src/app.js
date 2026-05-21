@@ -101,7 +101,8 @@ function renderHome() {
 function renderTile(item) {
   return html`
     <button class="lab-tile tile-${item.slug}" type="button" data-slug="${item.slug}" style="--tile-color:${item.color}">
-      <div class="tile-art">${tileArt(item.slug)}</div>
+      <img src="./assets/thumbnails/${item.thumbnail}" alt="${item.title}" loading="eager" />
+      <div class="tile-art fallback-art">${tileArt(item.slug)}</div>
       <span>${item.title}</span>
     </button>
   `;

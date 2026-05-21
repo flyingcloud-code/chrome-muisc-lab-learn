@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import { experiments } from '../src/data/experiments.js';
 
 test('defines the 14 Chrome Music Lab experiments in display order', () => {
@@ -29,5 +30,6 @@ test('each experiment has enough metadata to render a tile and help panel', () =
     assert.equal(item.summary.length > 20, true);
     assert.equal(typeof item.color, 'string');
     assert.match(item.color, /^#[0-9a-f]{6}$/i);
+    assert.equal(existsSync(new URL(`../assets/thumbnails/${item.thumbnail}`, import.meta.url)), true);
   }
 });
