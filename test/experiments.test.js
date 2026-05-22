@@ -26,6 +26,8 @@ test('each experiment has enough metadata to render a tile and help panel', () =
   for (const item of experiments) {
     assert.equal(typeof item.title, 'string');
     assert.equal(item.title.length > 2, true);
+    assert.equal(typeof item.officialPath, 'string');
+    assert.equal(item.officialPath.length > 2, true);
     assert.equal(typeof item.summary, 'string');
     assert.equal(item.summary.length > 20, true);
     assert.equal(typeof item.color, 'string');

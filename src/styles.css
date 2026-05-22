@@ -532,6 +532,38 @@ button {
   background: #fff;
 }
 
+.exact-experiment {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: #fff;
+}
+
+.exact-experiment iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  background: #fff;
+}
+
+.exact-home {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 21;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 10%);
+  color: #333;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
 .experiment-host {
   min-height: calc(100vh - 80px);
   display: grid;

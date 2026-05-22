@@ -1,4 +1,4 @@
-import { experiments, findExperiment } from './data/experiments.js';
+import { experiments, findExperiment } from './data/experiments.js?v=20260522-exact1';
 import {
   chordFrequencies,
   noteFrequency,
@@ -7,7 +7,7 @@ import {
   playNote,
   playTone,
   scaleNotes,
-} from './audio/engine.js';
+} from './audio/engine.js?v=20260522-exact1';
 
 const app = document.querySelector('#app');
 const cleanups = [];
@@ -132,6 +132,11 @@ function renderExperiment(slug) {
     routeTo('');
     return;
   }
+  const useLocalMvp = new URLSearchParams(window.location.search).get('local') === '1';
+  if (!useLocalMvp) {
+    renderExactExperiment(item);
+    return;
+  }
   setPage(html`
     <header class="topbar experiment-topbar">
       <button class="back" type="button" aria-label="Back">←</button>
@@ -153,6 +158,21 @@ function renderExperiment(slug) {
     panel.hidden = !panel.hidden;
   });
   renderers[slug](document.querySelector('[data-host]'));
+}
+
+function renderExactExperiment(item) {
+  setPage(html`
+    <main class="exact-experiment">
+      <iframe
+        title="${item.title}"
+        src="https://musiclab.chromeexperiments.com/${item.officialPath || item.title.replaceAll(' ', '-')}/"
+        allow="microphone; autoplay; midi; clipboard-write"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+      <button class="exact-home" type="button" aria-label="Back to local homepage">LOCAL HOME</button>
+    </main>
+  `);
+  document.querySelector('.exact-home').addEventListener('click', () => routeTo(''));
 }
 
 function button(label, className = '') {
