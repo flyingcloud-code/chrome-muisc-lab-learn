@@ -532,38 +532,6 @@ button {
   background: #fff;
 }
 
-.exact-experiment {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: #fff;
-}
-
-.exact-experiment iframe {
-  width: 100%;
-  height: 100%;
-  display: block;
-  border: 0;
-  background: #fff;
-}
-
-.exact-home {
-  position: fixed;
-  left: 16px;
-  bottom: 16px;
-  z-index: 21;
-  min-height: 34px;
-  padding: 0 14px;
-  border: 1px solid #ddd;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 88%);
-  box-shadow: 0 6px 18px rgb(0 0 0 / 10%);
-  color: #333;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
 .experiment-host {
   min-height: calc(100vh - 80px);
   display: grid;
@@ -643,7 +611,7 @@ button {
 }
 
 .composer-grid button.on {
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #ffca28));
+  background: var(--note-color, var(--accent));
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 65%);
 }
 
@@ -702,11 +670,12 @@ button {
   font-weight: 800;
   align-content: end;
   padding-bottom: 22px;
+  box-shadow: inset 0 9px 0 var(--note-color, transparent);
 }
 
 .piano-keys button.active,
 .chord-keys button.active {
-  background: var(--accent);
+  background: var(--note-color, var(--accent));
   color: #fff;
 }
 
@@ -833,20 +802,7 @@ button {
   height: min(520px, 82vw);
   margin: auto;
   border-radius: 50%;
-  background: conic-gradient(
-    #ef5350 0 30deg,
-    #ff7043 30deg 60deg,
-    #ffca28 60deg 90deg,
-    #8bc34a 90deg 120deg,
-    #26a69a 120deg 150deg,
-    #42a5f5 150deg 180deg,
-    #536dfe 180deg 210deg,
-    #7e57c2 210deg 240deg,
-    #ab47bc 240deg 270deg,
-    #ec407a 270deg 300deg,
-    #ef5350 300deg 330deg,
-    #ff7043 330deg 360deg
-  );
+  background: var(--wheel-gradient);
   overflow: hidden;
 }
 
@@ -865,6 +821,17 @@ button {
   font-weight: 900;
   font-size: 28px;
   text-shadow: 0 1px 2px rgb(0 0 0 / 22%);
+  z-index: 1;
+}
+
+.arp-wheel [data-root]::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--slice-color);
+  box-shadow: 0 2px 7px rgb(0 0 0 / 14%);
 }
 
 .arp-play {

@@ -21,7 +21,8 @@ npm test
 ## Notes
 
 - The homepage thumbnails are local copies of the public Chrome Music Lab experiment thumbnails for visual study and fidelity.
-- By default, experiment pages embed the live official Chrome Music Lab experiments for maximum fidelity.
-- Add `?local=1` before the hash route, for example `/?local=1#/experiment/song-maker`, to view the local MVP implementations.
-- The local MVP implementations are not the original Google source code.
+- Experiment pages are local MVP implementations so the site remains usable without access to the live official site.
+- Official open-source experiments are tracked in code with `source.type = "official-open-source-port"` and can be ported incrementally from `googlecreativelab/chrome-music-lab`.
+- Experiments not present in the official repository use `source.type = "local-recreation"` and are recreated locally from observed behavior.
+- The first porting baseline includes the official note colors plus Arpeggios major/minor wheel order.
 - This is not an official Google project.

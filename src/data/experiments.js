@@ -1,8 +1,23 @@
+import { OFFICIAL_REPOSITORY, OPEN_SOURCE_PORTS, SOURCE_TYPES } from './official-open-source.js';
+
+function localRecreation() {
+  return { type: SOURCE_TYPES.LOCAL_RECREATION };
+}
+
+function officialPort(slug) {
+  return {
+    type: SOURCE_TYPES.OFFICIAL_OPEN_SOURCE,
+    repository: OFFICIAL_REPOSITORY,
+    path: OPEN_SOURCE_PORTS[slug],
+    license: 'Apache-2.0',
+  };
+}
+
 export const experiments = [
   {
     slug: 'shared-piano',
     title: 'Shared Piano',
-    officialPath: 'Shared-Piano',
+    source: localRecreation(),
     color: '#f7b731',
     thumbnail: 'thumbnail_shared_piano.jpg',
     summary: '多人共享钢琴的本地版：用一排宽键盘即时弹奏，并切换不同合成音色。',
@@ -11,7 +26,7 @@ export const experiments = [
   {
     slug: 'song-maker',
     title: 'Song Maker',
-    officialPath: 'Song-Maker',
+    source: localRecreation(),
     color: '#26a69a',
     thumbnail: 'thumbnail_song_maker.jpg',
     summary: '用时间和音高组成的彩色网格创作旋律，再用底部鼓轨添加节奏。',
@@ -20,7 +35,7 @@ export const experiments = [
   {
     slug: 'rhythm',
     title: 'Rhythm',
-    officialPath: 'Rhythm',
+    source: localRecreation(),
     color: '#ec407a',
     thumbnail: 'thumbanil_rhythm.jpg',
     summary: '把鼓机变成三个可爱打击乐角色，点击节拍格后循环播放节奏。',
@@ -29,7 +44,7 @@ export const experiments = [
   {
     slug: 'spectrogram',
     title: 'Spectrogram',
-    officialPath: 'Spectrogram',
+    source: officialPort('spectrogram'),
     color: '#5c6bc0',
     thumbnail: 'thumbnail_spectrogram.jpg',
     summary: '把声音画成不断滚动的彩色频谱，让用户看见频率如何变化。',
@@ -38,7 +53,7 @@ export const experiments = [
   {
     slug: 'sound-waves',
     title: 'Sound Waves',
-    officialPath: 'Sound-Waves',
+    source: officialPort('sound-waves'),
     color: '#42a5f5',
     thumbnail: 'thumbnail_frequency.jpg',
     summary: '点击音符后让点阵像空气分子一样波动，观察声波传播。',
@@ -47,7 +62,7 @@ export const experiments = [
   {
     slug: 'arpeggios',
     title: 'Arpeggios',
-    officialPath: 'Arpeggios',
+    source: officialPort('arpeggios'),
     color: '#ffca28',
     thumbnail: 'thumbnail_arpeggios.jpg',
     summary: '在彩色圆盘上选择根音，听和弦音被一个一个弹出的琶音。',
@@ -56,7 +71,7 @@ export const experiments = [
   {
     slug: 'kandinsky',
     title: 'Kandinsky',
-    officialPath: 'Kandinsky',
+    source: localRecreation(),
     color: '#66bb6a',
     thumbnail: 'thumbnail_kandinsky.jpg',
     summary: '在空白画布上画线条和形状，再把画面从左到右播放成声音。',
@@ -65,7 +80,7 @@ export const experiments = [
   {
     slug: 'voice-spinner',
     title: 'Voice Spinner',
-    officialPath: 'Voice-Spinner',
+    source: officialPort('voice-spinner'),
     color: '#ffa726',
     thumbnail: 'thumbnail_voicespinner.jpg',
     summary: '用可拖拽圆盘模拟唱片旋转，改变声音播放的速度和方向。',
@@ -74,7 +89,7 @@ export const experiments = [
   {
     slug: 'harmonics',
     title: 'Harmonics',
-    officialPath: 'Harmonics',
+    source: officialPort('harmonics'),
     color: '#ab47bc',
     thumbnail: 'thumbnail_harmonics.jpg',
     summary: '点击不同泛音条，听见同一个基频按整数倍扩展出的音高关系。',
@@ -83,7 +98,7 @@ export const experiments = [
   {
     slug: 'piano-roll',
     title: 'Piano Roll',
-    officialPath: 'Piano-Roll',
+    source: officialPort('piano-roll'),
     color: '#ef5350',
     thumbnail: 'thumbnail_pianoroll.jpg',
     summary: '让预置乐句像自动钢琴卷帘一样滚动，音符经过播放线时响起。',
@@ -92,7 +107,7 @@ export const experiments = [
   {
     slug: 'oscillators',
     title: 'Oscillators',
-    officialPath: 'Oscillators',
+    source: localRecreation(),
     color: '#29b6f6',
     thumbnail: 'thumbnail_oscillators.jpg',
     summary: '选择 sine、square、triangle、sawtooth 波形，上下拖动改变频率。',
@@ -101,7 +116,7 @@ export const experiments = [
   {
     slug: 'strings',
     title: 'Strings',
-    officialPath: 'Strings',
+    source: officialPort('strings'),
     color: '#8d6e63',
     thumbnail: 'thumbnail_strings.jpg',
     summary: '拨动不同长度的弦，观察弦越短声音越高的物理关系。',
@@ -110,7 +125,7 @@ export const experiments = [
   {
     slug: 'melody-maker',
     title: 'Melody Maker',
-    officialPath: 'Melody-Maker',
+    source: officialPort('melody-maker'),
     color: '#7e57c2',
     thumbnail: 'thumbnail_melody_maker.jpg',
     summary: 'Song Maker 的极简旋律版：每一列选一个音，循环听见自己的旋律。',
@@ -119,7 +134,7 @@ export const experiments = [
   {
     slug: 'chords',
     title: 'Chords',
-    officialPath: 'Chords',
+    source: officialPort('chords'),
     color: '#26c6da',
     thumbnail: 'thumbnail_chords.jpg',
     summary: '点击一个根音，同时听见大三和弦或小三和弦的三个音。',

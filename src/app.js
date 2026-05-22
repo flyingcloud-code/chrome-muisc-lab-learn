@@ -1,4 +1,9 @@
-import { experiments, findExperiment } from './data/experiments.js?v=20260522-exact1';
+import { experiments, findExperiment } from './data/experiments.js?v=20260522-local1';
+import {
+  ARPEGGIOS_MAJOR_ORDER,
+  ARPEGGIOS_MINOR_ORDER,
+  noteColor,
+} from './data/official-open-source.js?v=20260522-local1';
 import {
   chordFrequencies,
   noteFrequency,
@@ -7,12 +12,11 @@ import {
   playNote,
   playTone,
   scaleNotes,
-} from './audio/engine.js?v=20260522-exact1';
+} from './audio/engine.js?v=20260522-local1';
 
 const app = document.querySelector('#app');
 const cleanups = [];
 const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
-const wheelNotes = ['C4', 'G4', 'D4', 'A4', 'E4', 'B4', 'F#4', 'C#4', 'Ab4', 'Eb4', 'Bb4', 'F4'];
 
 function html(strings, ...values) {
   return strings.reduce((result, item, index) => result + item + (values[index] ?? ''), '');
@@ -132,11 +136,6 @@ function renderExperiment(slug) {
     routeTo('');
     return;
   }
-  const useLocalMvp = new URLSearchParams(window.location.search).get('local') === '1';
-  if (!useLocalMvp) {
-    renderExactExperiment(item);
-    return;
-  }
   setPage(html`
     <header class="topbar experiment-topbar">
       <button class="back" type="button" aria-label="Back">←</button>
@@ -158,21 +157,6 @@ function renderExperiment(slug) {
     panel.hidden = !panel.hidden;
   });
   renderers[slug](document.querySelector('[data-host]'));
-}
-
-function renderExactExperiment(item) {
-  setPage(html`
-    <main class="exact-experiment">
-      <iframe
-        title="${item.title}"
-        src="https://musiclab.chromeexperiments.com/${item.officialPath || item.title.replaceAll(' ', '-')}/"
-        allow="microphone; autoplay; midi; clipboard-write"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
-      <button class="exact-home" type="button" aria-label="Back to local homepage">LOCAL HOME</button>
-    </main>
-  `);
-  document.querySelector('.exact-home').addEventListener('click', () => routeTo(''));
 }
 
 function button(label, className = '') {
@@ -228,7 +212,7 @@ function renderGridComposer(host, config) {
   host.innerHTML = html`
     <div class="composer ${config.className}">
       <div class="composer-grid" style="--steps:${config.steps};--rows:${rows.length}">
-        ${rows.map((note) => Array.from({ length: config.steps }, (_, col) => `<button data-cell="${note}:${col}" aria-label="${note} ${col}"></button>`).join('')).join('')}
+        ${rows.map((note) => Array.from({ length: config.steps }, (_, col) => `<button data-cell="${note}:${col}" aria-label="${note} ${col}" style="--note-color:${noteColor(note)}"></button>`).join('')).join('')}
       </div>
       ${config.drumRows ? `<div class="drum-grid" style="--steps:${config.steps}">${Array.from({ length: config.steps * config.drumRows }, (_, i) => `<button data-drum="${Math.floor(i / config.steps)}:${i % config.steps}"></button>`).join('')}</div>` : ''}
       <div class="control-row">
@@ -397,7 +381,7 @@ function renderSoundWaves(host) {
   host.innerHTML = html`
     <div class="waves-lab">
       <div class="wave-dots">${Array.from({ length: 220 }, (_, i) => `<i style="--i:${i}"></i>`).join('')}</div>
-      <div class="mini-key-row">${scaleNotes.map((note) => `<button data-note="${note}">${noteNames[scaleNotes.indexOf(note)]}</button>`).join('')}</div>
+      <div class="mini-key-row">${scaleNotes.map((note) => `<button data-note="${note}" style="--note-color:${noteColor(note)}">${noteNames[scaleNotes.indexOf(note)]}</button>`).join('')}</div>
     </div>
   `;
   host.querySelectorAll('[data-note]').forEach((key, index) => {
@@ -414,9 +398,17 @@ function renderSoundWaves(host) {
 function renderArpeggios(host) {
   let quality = 'major';
   let pattern = [0, 1, 2, 1];
+  let wheelPitches = ARPEGGIOS_MAJOR_ORDER;
+  const renderWheelButtons = () => wheelPitches
+    .map((pitch, i) => `<button style="--rot:${i * 30 + 15}deg;--slice-color:${noteColor(pitch)}" data-root="${pitch}4">${pitch}</button>`)
+    .join('');
+  const wheelGradient = () => `conic-gradient(${wheelPitches
+    .map((pitch, i) => `${noteColor(pitch)} ${i * 30}deg ${(i + 1) * 30}deg`)
+    .join(',')})`;
+
   host.innerHTML = html`
     <div class="arp-lab">
-      <div class="arp-wheel">${wheelNotes.map((note, i) => `<button style="--rot:${i * 30}deg;--hue:${i * 30}" data-root="${note}">${note.replace('4', '')}</button>`).join('')}<button class="arp-play">▶</button></div>
+      <div class="arp-wheel" style="--wheel-gradient:${wheelGradient()}">${renderWheelButtons()}<button class="arp-play">▶</button></div>
       <div class="control-row">${button('Major', 'quality active')} ${button('Minor', 'quality')} ${button('Up', 'pattern')} ${button('UpDown', 'pattern active')}</div>
     </div>
   `;
@@ -431,6 +423,15 @@ function renderArpeggios(host) {
   host.querySelectorAll('.quality').forEach((btn) => {
     btn.addEventListener('click', () => {
       quality = btn.textContent.toLowerCase();
+      wheelPitches = quality === 'minor' ? ARPEGGIOS_MINOR_ORDER : ARPEGGIOS_MAJOR_ORDER;
+      const wheel = host.querySelector('.arp-wheel');
+      wheel.style.setProperty('--wheel-gradient', wheelGradient());
+      wheel.querySelectorAll('[data-root]').forEach((node, index) => {
+        const pitch = wheelPitches[index];
+        node.dataset.root = `${pitch}4`;
+        node.textContent = quality === 'minor' ? pitch.toLowerCase() : pitch;
+        node.style.setProperty('--slice-color', noteColor(pitch));
+      });
       host.querySelectorAll('.quality').forEach((n) => n.classList.toggle('active', n === btn));
     });
   });
@@ -570,7 +571,7 @@ function renderPianoRoll(host) {
     for (const [start, note, len] of notes) {
       const x = 900 - (start * 95 + offset);
       const y = 365 - scaleNotes.indexOf(note) * 42;
-      context.fillStyle = ['#4f66d8', '#4db6ac', '#8bc34a', '#f4d13d', '#ff7043'][start % 5];
+      context.fillStyle = noteColor(note);
       context.fillRect(x, y, len * 80, 24);
       if (running && x <= 180 && x + 3 > 176) playNote(note, { duration: 0.18 });
     }
@@ -621,7 +622,7 @@ function renderChords(host) {
   host.innerHTML = html`
     <div class="chords-lab">
       <div class="quality-switch">${button('Major', 'active')} ${button('Minor')}</div>
-      <div class="chord-keys">${scaleNotes.slice(0, 7).map((note) => `<button data-root="${note}">${note.replace('4', '')}</button>`).join('')}</div>
+      <div class="chord-keys">${scaleNotes.slice(0, 7).map((note) => `<button data-root="${note}" style="--note-color:${noteColor(note)}">${note.replace('4', '')}</button>`).join('')}</div>
     </div>
   `;
   host.querySelectorAll('.quality-switch button').forEach((btn) => {
